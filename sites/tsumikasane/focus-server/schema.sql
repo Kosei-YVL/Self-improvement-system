@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS focus_head (id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL, write_id TEXT NOT NULL, updated_at TEXT NOT NULL);
+INSERT OR IGNORE INTO focus_head VALUES(1,0,'','');
+CREATE TABLE IF NOT EXISTS focus_chunks (revision INTEGER NOT NULL, part INTEGER NOT NULL, body TEXT NOT NULL, PRIMARY KEY(revision,part));

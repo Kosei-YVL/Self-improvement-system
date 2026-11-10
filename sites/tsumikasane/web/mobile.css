@@ -1,0 +1,31 @@
+/* Touch controls, readable fields, and the iPhone home indicator / display cutout. */
+.install-card{margin-top:20px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.install-card h3{margin-top:0}.install-card .install-help{margin:12px 0 0;color:var(--ink)}
+[hidden]{display:none!important}
+@media(pointer:coarse){
+  .icon-button,.task-tools .icon-button,.full-tasks .task-tools .icon-button,.day-selector .icon-button{min-width:44px;min-height:44px}
+  .check-button{width:26px;height:26px;position:relative;margin:2px 6px 0 3px}
+  .check-button:before{content:'';position:absolute;inset:-9px}
+  .primary-button,.secondary-button,.wheel-trigger,.filter-button,.task-add,.schedule-add{min-height:44px}
+  .filter-button{padding-bottom:9px}.task-filters{gap:24px}
+  .task-title{min-height:30px}.task-tools{gap:0}
+  .form-field input,.form-field textarea,.form-field select,.reflection textarea,.search-field input,.toolbar select,.theme-select,.date-select{font-size:16px}
+  .wheel-manual input{font-size:16px}
+  .calendar-wrap{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+}
+@media(max-width:540px){
+  .topbar{height:auto;min-height:64px;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left))}
+  .top-actions{gap:6px}.top-actions .icon-button{width:44px;height:44px}.demo-pill{white-space:nowrap}#mode-switch{font-size:10px;min-height:44px}
+  main{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .sidebar{height:calc(64px + env(safe-area-inset-bottom));padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .sidebar nav{height:64px}.app-shell{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .nav-item{font-size:9px;gap:4px}.nav-item svg{width:21px;height:21px}.nav-count{display:none}
+  .toast{bottom:calc(82px + env(safe-area-inset-bottom))}
+  dialog{max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)}
+  .modal-form,.settings-content{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  .task-row{gap:8px}.task-tools{flex-direction:column}.task-title{font-size:12px}.task-meta{font-size:10px}.task-body{padding-top:3px}
+  .task-meta .tag{font-size:9px}.preferred-window{font-size:9px}.task-tools .icon-button{min-width:36px;min-height:36px}
+  .calendar-wrap{max-height:65dvh}.storage-banner{align-items:flex-start}.storage-banner span{overflow-wrap:anywhere}
+  .asset-toolbar{gap:7px}.asset-toolbar .primary-button,.asset-toolbar .secondary-button{white-space:normal}
+}
+@media(max-width:360px){.top-actions{gap:2px}#mode-switch{font-size:9px}.demo-pill{padding:3px 5px}.stat-value{font-size:20px}.page-heading h1{font-size:20px}.asset-row{gap:7px}.asset-badge{font-size:7px}.form-actions-right{gap:5px}}

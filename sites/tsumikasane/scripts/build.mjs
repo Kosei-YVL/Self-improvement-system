@@ -1,0 +1,10 @@
+import { mkdir,rm,writeFile,copyFile,cp } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { bundleWorker } from './build-worker.mjs';
+const root=resolve(import.meta.dirname,'..'),bundle=await bundleWorker(root);
+await rm(resolve(root,'dist'),{recursive:true,force:true});
+await mkdir(resolve(root,'dist/server'),{recursive:true});await mkdir(resolve(root,'dist/.openai'),{recursive:true});
+await writeFile(resolve(root,'dist/server/index.js'),bundle.code);
+await copyFile(resolve(root,'.openai/hosting.json'),resolve(root,'dist/.openai/hosting.json'));
+await cp(resolve(root,'drizzle'),resolve(root,'dist/.openai/drizzle'),{recursive:true});
+console.log('Built Worker ESM with '+bundle.assetCount+' assets and D1 storage.');

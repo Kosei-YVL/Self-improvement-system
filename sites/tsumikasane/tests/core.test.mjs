@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { dateKey, dayAdd, weekDays, streak, scheduleConflict, validateData, demoData, blankData } from '../web/core.mjs';
+assert.equal(dateKey(new Date('2026-10-14T16:00:00Z')), '2026-10-15');
+assert.equal(dayAdd('2026-12-31',1),'2027-01-01');
+assert.deepEqual(weekDays('2026-10-15'), ['2026-10-12','2026-10-13','2026-10-14','2026-10-15','2026-10-16','2026-10-17','2026-10-18']);
+assert.equal(streak([{date:'2026-10-14'},{date:'2026-10-13'},{date:'2026-10-13'}],'2026-10-15'),2);
+assert.equal(streak([{date:'2026-10-15'},{date:'2026-10-13'}],'2026-10-15'),1);
+const e={id:'a',date:'2026-10-15',start:'09:00',end:'10:00'};
+assert.equal(scheduleConflict([e],{...e,id:'b',start:'10:00',end:'11:00'}),false);
+assert.equal(scheduleConflict([e],{...e,id:'b',start:'09:30',end:'10:30'}),true);
+assert.equal(scheduleConflict([e],e,'a'),false);
+assert.equal(validateData(demoData('2026-10-15')),true);
+assert.equal(validateData(blankData()),true);
+const malformed=demoData('2026-10-15');malformed.logs[0].date='2026-02-31';assert.equal(validateData(malformed),false);
+const duplicate=demoData('2026-10-15');duplicate.tasks.push(duplicate.tasks[0]);assert.equal(validateData(duplicate),false);
+console.log('Core checks passed: JST dates, weeks, streaks, schedule overlap, backup validation.');

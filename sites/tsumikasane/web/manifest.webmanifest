@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "積みかさね — 自己改善アプリ",
+  "short_name": "積みかさね",
+  "description": "タスク・予定・日々の積み上げを、自分の資産に。",
+  "lang": "ja",
+  "start_url": "/?launch=home#today",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f9f5",
+  "theme_color": "#326653",
+  "icons": [
+    {"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {blankData} from '../web/core.mjs';
+import {availableEvent,unrecordedEvents,priorStart,recordSeconds,durationText,orderedItems} from '../web/focus-experience.mjs';
+import {sessionRecord,elapsedSession} from '../web/focus-planning.mjs';
+import {validConfig} from '../web/focus-model.mjs';
+const data=blankData();data.events=[{id:'today',date:'2026-10-29',start:'12:00'},{id:'prior',date:'2026-10-28',start:'10:00'},{id:'old',date:'2026-10-01',start:'10:00'}];
+assert.equal(availableEvent(data,'','2026-10-29').id,'today');data.logs.push({id:'done',eventId:'today'});assert.equal(availableEvent(data,'today','2026-10-29').id,'today');assert.equal(availableEvent(data,'','2026-10-29'),undefined);data.logs=[];assert.equal(unrecordedEvents(data,'2026-10-29').length,1);
+data.logs.push({id:'record',eventId:'prior',date:'2026-10-29'});assert.equal(unrecordedEvents(data,'2026-10-29').length,1);data.logs[0].date='2026-10-28';assert.equal(unrecordedEvents(data,'2026-10-29').length,0);
+assert.deepEqual(priorStart(25,new Date('2026-10-28T15:10:00Z')),{date:'2026-10-28',start:'23:45'});
+assert.equal(recordSeconds({minutes:1,elapsedSeconds:2}),2);assert.equal(durationText(2),'2秒');assert.equal(durationText(5681*60),'94時間41分');
+assert.deepEqual(orderedItems([{id:'new'},{id:'b'},{id:'a'}],['a','b']).map(v=>v.id),['a','b','new']);
+const start=Date.parse('2026-10-28T12:00:00Z'),session={id:'one',title:'作業',date:'2026-10-28',start:'21:00',mode:'timer',goal:25*60000,plannedMinutes:45,elapsed:0,started:start,startedAt:new Date(start).toISOString(),running:true};
+const finished=sessionRecord(session,start+3*3600000);assert.equal(finished.elapsedSeconds,10800);assert.equal(finished.plannedMinutes,45);assert.equal(finished.timerGoalMinutes,25);assert.equal(finished.endedAt,'2026-10-28T15:00:00.000Z');
+const paused={...session,mode:'stopwatch',running:false,elapsed:91000,pausedAt:'2026-10-28T12:01:31Z'};assert.equal(sessionRecord(paused,start+3*3600000).endedAt,'2026-10-28T12:01:31.000Z');assert.equal(sessionRecord(paused,start+3*3600000).elapsedSeconds,91);
+const config={template:'focus',order:['capture','plan','progress','logs'],progress:'calendar',routines:[]};assert(validConfig({...config,pageOrder:{dashboard:['plan','capture','progress','logs'],tasks:['r1'],review:['review-records','review-summary','review-heat']}}));assert(!validConfig({...config,pageOrder:{dashboard:['other']}}));
+assert(validConfig({...config,skin:'glass',glassEffects:true}));assert(!validConfig({...config,glassEffects:'yes'}));
+console.log('Experience checks passed: pending selection, retrospective date/source filtering, midnight defaults, exact seconds, stable layout order, actual timer finish endpoint, paused endpoint, planned/goal distinction, invalid layouts rejected.');

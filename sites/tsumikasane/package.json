@@ -1,0 +1,23 @@
+{
+  "name": "tsumikasane",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev-server.mjs",
+    "build:standalone": "node scripts/build-standalone.mjs",
+    "build:device": "node scripts/build-device.mjs",
+    "password:hash": "node scripts/password-hash.mjs",
+    "db:generate": "drizzle-kit generate",
+    "build:focus": "node scripts/build-device.mjs --focus",
+    "build:focus:sync": "node scripts/build-focus-sync.mjs",
+    "build:focus:dev": "node scripts/build-focus-sync.mjs --dev"
+  },
+  "dependencies": {
+    "fflate": "0.8.2",
+    "drizzle-orm": "0.44.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.4"
+  }
+}

@@ -1,0 +1,25 @@
+# ChatGPT-independent personal app. Review Render costs before creating it.
+services:
+  - type: web
+    name: tsumikasane
+    runtime: node
+    plan: 0.5c-512mb
+    region: singapore
+    rootDir: sites/tsumikasane
+    buildCommand: npm run build:standalone
+    startCommand: node standalone/server.mjs
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATA_DIR
+        value: /var/data
+      - key: APP_PASSWORD_HASH
+        sync: false
+    disk:
+      name: tsumikasane-data
+      mountPath: /var/data
+      sizeGB: 1

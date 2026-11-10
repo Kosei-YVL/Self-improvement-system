@@ -1,0 +1,12 @@
+import { cp,copyFile,mkdir,rm,writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { bundleWorker } from './build-worker.mjs';
+const root=resolve(import.meta.dirname,'..'),out=resolve(root,'standalone');
+const bundle=await bundleWorker(root);
+await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});
+await mkdir(resolve(out,'server'),{recursive:true});await writeFile(resolve(out,'server/index.js'),bundle.code);
+await cp(resolve(root,'drizzle'),resolve(out,'drizzle'),{recursive:true});
+for(const [from,to] of [['scripts/standalone-server.mjs','server.mjs'],['scripts/standalone-config.mjs','standalone-config.mjs'],['scripts/setup-local.mjs','setup-local.mjs'],['scripts/sqlite-adapter.mjs','sqlite-adapter.mjs'],['scripts/password-hash.mjs','password-hash.mjs'],['STANDALONE.md','README.md'],['deploy/START-WINDOWS.cmd','START-WINDOWS.cmd'],['deploy/Dockerfile','Dockerfile'],['deploy/Caddyfile','Caddyfile'],['deploy/compose.yaml','compose.yaml'],['deploy/render.yaml','render.yaml'],['deploy/.env.example','.env.example']])await copyFile(resolve(root,from),resolve(out,to));
+await writeFile(resolve(out,'package.json'),JSON.stringify({name:'tsumikasane-standalone',private:true,type:'module',engines:{node:'>=24'},scripts:{start:'node server.mjs','password:hash':'node password-hash.mjs'}},null,2)+'\n');
+await writeFile(resolve(out,'.dockerignore'),'.env\ndata\n*.sqlite*\n.git\n');
+console.log('Independent app: standalone/ (Node.js 24, no npm dependencies, no ChatGPT login).');

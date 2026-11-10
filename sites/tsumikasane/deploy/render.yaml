@@ -1,0 +1,24 @@
+# Creating this service incurs Render charges. For the standalone package root.
+services:
+  - type: web
+    name: tsumikasane
+    runtime: node
+    plan: 0.5c-512mb
+    region: singapore
+    buildCommand: node --check server.mjs
+    startCommand: node server.mjs
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATA_DIR
+        value: /var/data
+      - key: APP_PASSWORD_HASH
+        sync: false
+    disk:
+      name: tsumikasane-data
+      mountPath: /var/data
+      sizeGB: 1

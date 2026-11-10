@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import {randomBytes} from 'node:crypto';
+import {GoogleCalendar,mapGoogleEvents,toGoogleEvent,googleBusyEvents} from '../web/focus-google.mjs';
+import {keyMaterial} from '../web/focus-sync-model.mjs';
+const event=(id,start,end,extra={})=>({id,calendarId:'main',summary:id,status:'confirmed',start:{dateTime:start},end:{dateTime:end},...extra});
+const overnight=event('night','2026-10-26T23:30:00+09:00','2026-10-27T00:30:00+09:00');
+let rows=mapGoogleEvents([overnight]);assert.equal(rows.length,2);assert.deepEqual(rows.map(r=>[r.date,r.start,r.end,r.startMinute,r.endMinute]),[['2026-10-26','23:30','24:00',1410,1440],['2026-10-27','00:00','00:30',0,30]]);assert(rows.every(r=>r.readOnly&&r.source==='google'&&r.busy));
+rows=mapGoogleEvents([{id:'day',calendarId:'main',summary:'終日',start:{date:'2026-10-26'},end:{date:'2026-10-28'}}]);assert.equal(rows.length,2);assert.equal(rows[0].endMinute,1440);assert(rows.every(r=>r.allDay));
+assert.equal(mapGoogleEvents([{id:'years',calendarId:'main',start:{date:'2000-01-01'},end:{date:'2100-01-01'}}],{timeMin:'2026-10-26T00:00:00+09:00',timeMax:'2026-10-28T00:00:00+09:00'}).length,2);
+assert.equal(mapGoogleEvents([event('midnight','2026-10-26T23:00:00+09:00','2026-10-27T00:00:00+09:00')]).length,1);
+const offset=mapGoogleEvents([event('offset','2026-10-26T00:00:00Z','2026-10-26T01:00:00Z')])[0];assert.equal(offset.start,'09:00');assert.equal(offset.end,'10:00');
+const newYork=event('dst','2026-03-08T01:30:00','2026-03-08T03:30:00',{start:{dateTime:'2026-03-08T01:30:00',timeZone:'America/New_York'},end:{dateTime:'2026-03-08T03:30:00',timeZone:'America/New_York'}});assert.deepEqual(mapGoogleEvents([newYork]).map(r=>[r.start,r.end]),[['15:30','16:30']]);
+assert.equal(mapGoogleEvents([event('gap','x','x',{start:{dateTime:'2026-03-08T02:30:00',timeZone:'America/New_York'},end:{dateTime:'2026-03-08T03:30:00',timeZone:'America/New_York'}})]).length,0);
+assert.equal(mapGoogleEvents([event('bad-date','2026-02-30T09:00:00+09:00','2026-02-30T10:00:00+09:00')]).length,0);
+assert.equal(mapGoogleEvents([event('no-end','2026-10-26T09:00:00+09:00','bad')]).length,0);
+const normal=event('meeting','2026-10-26T09:00:00+09:00','2026-10-26T10:00:00+09:00'),transparent={...normal,id:'transparent',transparency:'transparent'},cancelled={...normal,id:'cancelled',status:'cancelled'};
+assert.equal(mapGoogleEvents([normal,normal]).length,1);assert.equal(mapGoogleEvents([cancelled]).length,0);assert.equal(googleBusyEvents([normal,transparent]).length,1);assert.equal(mapGoogleEvents([transparent])[0].busy,false);
+const mirror={...normal,id:'mirror',extendedProperties:{private:{focusId:'f1',focusEnv:'personal'}}};assert.equal(mapGoogleEvents([mirror],{focusIds:['f1']})[0].busy,false);assert.equal(mapGoogleEvents([mirror],{focusIds:[]})[0].busy,true);assert.equal(mapGoogleEvents([mirror],{environment:'development',focusIds:['f1']})[0].focusOwned,false);
+const plan={id:'f1',title:'学習 · 読書',date:'2026-10-26',start:'09:10',end:'09:35',prepareBefore:10,prepareAfter:5,note:'メモ'};
+const payload=toGoogleEvent(plan);assert.equal(payload.start.dateTime,'2026-10-26T09:10:00+09:00');assert.equal(payload.end.dateTime,'2026-10-26T09:35:00+09:00');assert.deepEqual(payload.extendedProperties.private,{focusId:'f1',focusEnv:'personal'});assert(payload.description.includes('前10分 / 後5分'));assert.throws(()=>toGoogleEvent({...plan,start:'24:00'}));assert.throws(()=>toGoogleEvent({...plan,id:'a'.repeat(1025)}));
+const key=randomBytes(32).toString('base64url'),auth=(await keyMaterial(key)).auth,values=new Map([['focus-sync-key',key]]);const store={read:k=>values.get(k)||null,write:(k,v)=>values.set(k,v),flush:async()=>true};
+const calls=[],statuses=[];let failRefresh=false,refreshBatch=0,conflict=false,remoteEtag='e1',partial=false;
+const calendars=[{id:'main',summary:'本体',primary:true,accessRole:'owner'},{id:'read-only',summary:'参照',accessRole:'reader'}];
+const fetcher=async(path,options)=>{assert(path.startsWith('/api/google/'));assert.equal(options.headers.Authorization,'Bearer '+auth);assert.equal(options.headers['X-Focus-Environment'],'personal');assert.equal(options.cache,'no-store');const body=options.body?JSON.parse(options.body):null;calls.push({path,body,method:options.method});
+ if(path.endsWith('/status'))return Response.json({configured:true,connected:true,calendars});
+ if(path.endsWith('/connect'))return Response.json({url:'https://accounts.google.com/o/oauth2/v2/auth?state=test'});
+ if(path.endsWith('/disconnect'))return Response.json({ok:true});
+ if(path.endsWith('/refresh')){refreshBatch++;if(failRefresh)throw Error('network down');return Response.json({events:body.calendarIds.includes('main')?[{...normal,etag:'foreign'}, {...mirror,etag:remoteEtag}]:[],calendars});}
+ if(path.endsWith('/publish')){if(conflict)return Response.json({results:[],conflicts:body.events.map(e=>({focusId:e.id,reason:'google_changed'}))});return Response.json({results:partial?[]:[...body.events.map(e=>({focusId:e.id,googleId:'g-'+e.id,etag:'e1',htmlLink:'https://calendar.google.com/test'})),...body.removedIds.map(id=>({focusId:id,deleted:true}))]});}
+ throw Error('unexpected path');};
+const google=new GoogleCalendar({store,environment:'personal',fetcher,getFocusIds:()=>['f1'],onStatus:s=>statuses.push(s),clock:()=>Date.parse('2026-10-26T00:00:00Z')});
+assert.equal(google.settings.autoPublish,false);assert.equal(google.events.length,0);await google.loadStatus();assert.deepEqual(google.settings.calendarIds,['main','read-only']);assert(google.connected&&google.configured);assert.equal((await google.connect()).url.startsWith('https://accounts.google.com/'),true);
+await google.refresh();assert.equal(google.events.length,2);assert.equal(google.events.find(e=>e.focusId==='f1').busy,false);const retained=structuredClone(google.events);failRefresh=true;await assert.rejects(()=>google.refresh());assert.deepEqual(google.events,retained);assert.equal(google.stale,true);failRefresh=false;
+await google.configure({publishCalendarId:'main',autoPublish:true});let result=await google.publish([plan]);assert.equal(result.results.length,1);const firstPublishCalls=calls.filter(c=>c.path.endsWith('/publish')).length;
+result=await google.publish([plan]);assert.equal(result.results.length,0);assert.deepEqual(result.skipped,['f1']);assert.equal(calls.filter(c=>c.path.endsWith('/publish')).length,firstPublishCalls);
+remoteEtag='google-user-edited';await google.refresh();conflict=true;result=await google.publish([plan]);assert.equal(result.conflicts.length,1);const conflictCalls=calls.filter(c=>c.path.endsWith('/publish')).length;await google.publish([plan]);assert.equal(calls.filter(c=>c.path.endsWith('/publish')).length,conflictCalls);assert(google.message.includes('変更を確認'));
+conflict=false;await google.publish([plan],{forceCheck:true});assert.equal(google.conflicts.length,0);await assert.rejects(()=>google.publish([plan],{calendarId:'read-only'}));
+// Explicitly deselecting all calendars remains empty across status checks and restarts.
+await google.configure({calendarIds:[]});await google.loadStatus();assert.deepEqual(google.settings.calendarIds,[]);await google.refresh();assert.deepEqual(google.events,[]);const restarted=new GoogleCalendar({store,fetcher});assert.deepEqual(restarted.settings.calendarIds,[]);
+// Split API requests leave room within free-worker provider/database subrequest limits.
+const ids=Array.from({length:12},(_,i)=>'calendar-'+i);await google.configure({calendarIds:ids});const beforeRefresh=calls.length;await google.refresh();const batches=calls.slice(beforeRefresh).filter(c=>c.path.endsWith('/refresh'));assert.deepEqual(batches.map(c=>c.body.calendarIds.length),[5,5,2]);
+const plans=Array.from({length:12},(_,i)=>({...plan,id:'f-'+i}));const beforePublish=calls.length;result=await google.publish(plans);assert.equal(result.results.length,12);assert.deepEqual(calls.slice(beforePublish).filter(c=>c.path.endsWith('/publish')).map(c=>c.body.events.length),[5,5,2]);
+partial=true;await assert.rejects(()=>google.publish([{...plan,id:'unacknowledged'}]),/一部の予定/);partial=false;
+await assert.rejects(()=>google.configure({calendarIds:Array.from({length:21},(_,i)=>'c'+i)}));await assert.rejects(()=>google.refresh({timeMin:'2020-01-01',timeMax:'2022-01-01'}));
+// A later failed read batch never replaces the previously cached calendar data.
+const partialValues=new Map([['focus-sync-key',key]]),partialStore={read:k=>partialValues.get(k)||null,write:(k,v)=>partialValues.set(k,v),flush:async()=>true};let readFailAt=0,readCalls=0,writeFailAt=0,writeCalls=0;
+const partialClient=new GoogleCalendar({store:partialStore,clock:()=>Date.parse('2026-10-26T00:00:00Z'),fetcher:async(path,options)=>{const body=options.body?JSON.parse(options.body):null;if(path.endsWith('/refresh')){readCalls++;if(readFailAt===readCalls)throw Error('offline');return Response.json({events:body.calendarIds.map(id=>({...normal,id:'event-'+id,calendarId:id})),calendars});}if(path.endsWith('/publish')){writeCalls++;if(writeFailAt===writeCalls)throw Error('offline');return Response.json({results:body.events.map(e=>({focusId:e.id,googleId:'g-'+e.id,etag:'e1'}))});}return fetcher(path,options);}});
+await partialClient.loadStatus();await partialClient.refresh();const oldCache=partialValues.get('focus-google-cache');await partialClient.configure({calendarIds:['main','c1','c2','c3','c4','c5']});const oldEvents=structuredClone(partialClient.events);readFailAt=readCalls+2;await assert.rejects(()=>partialClient.refresh());assert.equal(partialValues.get('focus-google-cache'),oldCache);assert.deepEqual(partialClient.events,oldEvents);
+// Successful write batches are acknowledged even when a later batch fails.
+writeFailAt=2;await assert.rejects(()=>partialClient.publish(plans,{calendarId:'main'}));assert.equal(Object.values(partialClient.published).length,5);writeFailAt=0;const previousWrites=writeCalls;const remaining=await partialClient.publish(plans,{calendarId:'main'});assert.equal(remaining.results.length,7);assert.equal(writeCalls-previousWrites,2);
+assert(![...values.entries()].filter(([k])=>k!=='focus-sync-key').some(([,value])=>value.includes(key)||value.includes(auth)));assert(!calls.some(c=>JSON.stringify(c.body).includes(key)));
+await google.disconnect();assert.equal(google.connected,false);assert.deepEqual(google.events,[]);assert.equal(calls.filter(c=>c.path.endsWith('/disconnect')).length,1);
+const noKey=new GoogleCalendar({store:{...store,read:()=>null},fetcher});await assert.rejects(()=>noKey.loadStatus(),/同期キー/);
+const badUrl=new GoogleCalendar({store,fetcher:async()=>Response.json({url:'https://evil.example/oauth'})});await assert.rejects(()=>badUrl.connect(),/認証先/);
+// A late calendar read cannot repopulate data after disconnect.
+const raceValues=new Map([['focus-sync-key',key]]),raceStore={read:k=>raceValues.get(k)||null,write:(k,v)=>raceValues.set(k,v),flush:async()=>true};let releaseRead,readStarted;
+const started=new Promise(resolve=>readStarted=resolve);
+const racing=new GoogleCalendar({store:raceStore,fetcher:async(path,options)=>{if(path.endsWith('/status'))return Response.json({configured:true,connected:true,calendars:[calendars[0]]});if(path.endsWith('/refresh')){readStarted();return new Promise(resolve=>releaseRead=()=>resolve(Response.json({events:[normal],calendars})));}if(path.endsWith('/disconnect'))return Response.json({disconnected:true});throw Error('unexpected');}});
+await racing.loadStatus();const pendingRead=racing.refresh();await started;await racing.disconnect();releaseRead();await pendingRead;assert.equal(racing.connected,false);assert.deepEqual(racing.events,[]);assert.deepEqual(JSON.parse(raceValues.get('focus-google-cache')).events,[]);assert.equal(racing.message,'Google未接続');
+console.log('Google calendar client/model checks passed: JST/offset/DST/all-day/midnight mapping, transparent/cancelled/mirror handling, prep-only metadata, authenticated same-origin APIs, offline cache, changed-only writes, conflict retry suppression, batching, partial ack handling, calendar rights, key exclusion.');

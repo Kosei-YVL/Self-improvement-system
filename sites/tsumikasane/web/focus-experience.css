@@ -1,0 +1,98 @@
+/* Structure and touch targets; skins are layered on top. */
+#sidebar{position:fixed;inset:0 auto 0 0;width:196px;padding:26px 14px;background:var(--paper);border-right:1px solid var(--line);z-index:5}#sidebar>.brand{padding:0 12px 34px;font-size:24px}#sidebar>.brand img{width:30px;height:30px}#primary-nav{display:flex;flex-direction:column;gap:6px;margin:0;padding:0}#primary-nav a{display:flex;align-items:center;gap:13px;padding:12px 14px;min-height:46px;font-size:14px}#primary-nav svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}header{margin-left:196px;width:calc(100% - 196px);max-width:none;height:60px;padding:14px 32px}header>.brand{display:none}header #settings{position:fixed;bottom:22px;left:14px;width:168px;display:flex;align-items:center;text-align:left;padding-left:18px;background:transparent;border:1px solid var(--line);z-index:6}#save-status{font-size:11px;max-width:260px}.app-workspace{margin-left:196px;max-width:calc(100% - 196px);width:calc(100% - 196px);padding:8px 32px 38px}.page-title{margin:4px 0 18px}.page-title h1{font-size:18px;letter-spacing:.02em}.page-actions{display:flex;align-items:center;gap:9px}.page-actions select{width:auto}.quiet-button{background:transparent;border-color:transparent;color:var(--muted)}.quiet-button:hover{background:var(--control);color:var(--ink);border-color:var(--line)}.layout-toggle{font-size:12px;padding:7px 12px;min-height:36px}.dashboard-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px}.dashboard-grid .panel{padding:18px 20px}.session-heading{display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:37px}.session-selection{min-width:0}.session-selection>span,.session-selection>small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.session-selection>span{font-size:14px;font-weight:550}.session-selection>small{font-size:12px;color:var(--muted)}.session-heading .session-task{font-size:15px}.session-heading .session-work{margin:3px 0 0;font-size:12px}.session-panel #session-state{font-size:11px;white-space:nowrap}.session-panel .timer-output{font-size:36px;letter-spacing:-.02em;line-height:1.1;margin:0;font-weight:400;font-variant-numeric:tabular-nums}.clock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;margin:10px 0}.clock-row>.primary-button{min-width:90px;min-height:45px;flex-shrink:0}.mode-switch{display:flex;gap:3px}.mode-switch button{min-height:36px;padding:6px 3px;font-size:11px;background:transparent;border-color:transparent;border-radius:7px}.mode-switch button[aria-pressed=true]{border-color:var(--line);background:var(--control);color:var(--ink)}.session-bottom{display:flex;align-items:center;gap:6px}.session-bottom button{padding:6px 12px;min-height:36px;font-size:12px}.backdate-shortcut{font-size:12px;padding:6px 10px;min-height:36px}.recovery-shortcuts{display:flex;flex-wrap:wrap;gap:10px;margin-top:13px}.recovery-shortcuts button{font-size:11px;padding:3px 0;min-height:28px;background:none;border:0;color:var(--muted);text-align:left}.duration-presets{display:flex;align-items:center;gap:6px;margin-top:8px}.duration-presets>button{min-height:34px;padding:5px 9px;font-size:12px;white-space:nowrap}.timer-custom{min-width:0;flex:1}.timer-custom .wheel-trigger{width:100%;min-width:0;min-height:34px;font-size:12px;padding:5px}.program-detail{font-size:11px;color:var(--muted);margin-top:9px}.break-ready{display:flex;gap:8px;margin-top:8px}.break-ready button{font-size:12px;padding:6px 10px;min-height:36px}.choose-first{border-style:dashed;font-size:14px;min-height:56px}.session-panel:has(.choose-first) .session-heading{min-height:70px}.today-panel .date-heading{margin-bottom:8px}.today-panel .date-heading h2{font-size:13px}.today-panel .date-heading button{padding:5px 10px;min-height:36px}.today-panel .task-row{padding:2px 0;gap:3px;border-color:color-mix(in srgb,var(--line) 60%,transparent)}.task-select{display:flex;align-items:center;gap:9px;flex:1;text-align:left;min-width:0;background:transparent;border:0;border-radius:8px;padding:8px 7px;min-height:54px}.task-select:hover{background:var(--control)}.task-select[aria-pressed=true]{background:color-mix(in srgb,var(--green) 7%,transparent);color:var(--ink)}.task-indicator{width:6px;height:6px;flex-shrink:0;border-radius:50%;background:var(--muted);opacity:.35}.task-select[aria-pressed=true] .task-indicator{background:var(--green);opacity:1}.task-select .body{min-width:0;flex:1}.today-panel .task-select strong{display:flex;align-items:baseline;gap:9px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px;line-height:1.5}.today-panel .task-select strong>.work-title{font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}.task-select small{display:block;font-size:10px;line-height:1.5;margin-top:2px}.plan-more{flex-shrink:0;min-width:36px;min-height:44px}.completed-tasks{margin-top:10px}.completed-tasks summary{font-size:11px;color:var(--muted);cursor:pointer;min-height:30px;padding:5px}.completed-row{display:flex;gap:9px;align-items:center;min-height:42px;font-size:12px;color:var(--muted)}.completed-row>span:nth-child(2){flex:1}.completed-row button{padding:4px 9px;min-height:36px}.picker-routines{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:13px}.picker-routines button{padding:8px 6px;min-height:42px;font-size:12px;overflow-wrap:anywhere}.search-field{display:block}.search-field input{font-size:14px;min-height:42px}.activity-choices{margin-top:12px;gap:6px}.activity-choices button{padding:9px 12px;min-height:44px}.activity-choices small{white-space:nowrap;font-size:11px;display:flex;align-items:center;gap:8px}.choice-check{opacity:0;font-size:15px}.activity-choices [aria-pressed=true] .choice-check{opacity:1}.picker-additions{margin:10px 0}.picker-additions button{min-height:34px;padding:4px 7px;font-size:11px;background:transparent;border-style:dashed;color:var(--muted)}.dialog-footer{position:sticky;bottom:-24px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:var(--paper);border-top:1px solid var(--line);padding:14px 0 4px;z-index:2}.dialog-footer small{color:var(--muted);font-size:12px}.dialog-footer button{min-width:100px}.definition-meta{margin-bottom:12px}.definition-activities{gap:5px}.definition-activities button{padding:8px 12px;min-height:40px;font-size:13px}.activity-more{font-size:11px;margin-top:8px;padding:5px 7px;min-height:32px}.definition-card .add-bottom{margin-top:10px;min-height:36px;padding:6px;font-size:11px}.timeline-scroll{max-height:300px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}.layout-block{position:relative}.block-handle{position:absolute;top:7px;right:7px;z-index:2;background:var(--control);border:1px solid var(--line);min-width:32px;min-height:32px;padding:2px;cursor:grab;touch-action:none}.layout-editing .panel{outline:1px dashed var(--green);outline-offset:3px}.layout-editing .date-heading{padding-right:30px}.layout-dragging{opacity:.45}.block-handle:active{cursor:grabbing}.settings-section{margin:20px 0}.settings-section>summary{cursor:pointer;font-size:13px;padding:10px 0}.settings-section form{padding-top:12px}#log-form .settings-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}#log-form .settings-grid .form-field{font-size:11px}#log-form .settings-grid .wheel-trigger{font-size:12px;padding:7px 4px}#log-form .actions{position:sticky;bottom:-24px;background:var(--paper);border-top:1px solid var(--line);padding:12px 0 2px;margin-top:12px;z-index:2}#log-form>.form-field{margin-bottom:10px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1250px){.app-workspace{max-width:1240px}.dashboard-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+@media(max-width:1000px) and (min-width:761px){#sidebar{width:160px}header{margin-left:160px;width:calc(100% - 160px)}.app-workspace{margin-left:160px;width:calc(100% - 160px);max-width:calc(100% - 160px);padding-left:20px;padding-right:20px}header #settings{width:132px}.dashboard-grid{grid-template-columns:1fr}.session-panel .timer-output{font-size:34px}}
+@media(max-width:760px){#sidebar{position:static;display:contents;padding:0;width:auto;border:0}#sidebar>.brand{display:none}#primary-nav{position:fixed;inset:auto 0 0;flex-direction:row;justify-content:space-around;padding:5px 10px calc(5px + env(safe-area-inset-bottom));margin:0;background:var(--bg);border-top:1px solid var(--line);z-index:20;gap:6px}#primary-nav a{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:49px;padding:4px 12px;font-size:10px}#primary-nav svg{width:18px;height:18px}header{margin:0;width:100%;height:58px;padding:10px 15px;gap:9px}header>.brand{display:flex;font-size:20px;gap:7px}header>.brand img{width:27px;height:27px}header #settings{position:static;width:auto;min-height:36px;padding:6px 10px;font-size:11px;border-color:transparent}#save-status{margin-left:auto;max-width:120px;font-size:9px}.app-workspace{margin:0;max-width:none;width:100%;padding:5px 12px 90px}.page-title{margin:2px 3px 11px}.page-title h1{font-size:15px}.layout-toggle{font-size:10px;min-height:30px;padding:4px 8px}.dashboard-grid,.definition-grid{grid-template-columns:1fr;gap:10px}.dashboard-grid .panel{padding:13px 15px}.session-panel .timer-output{font-size:34px}.clock-row{min-height:48px;margin:7px 0}.clock-row>.primary-button{min-height:42px;min-width:86px}.mode-switch button{min-height:34px;font-size:11px}.session-heading{min-height:30px}.session-selection>span{font-size:13px}.session-selection>small{font-size:11px}.recovery-shortcuts{margin-top:8px;gap:12px}.recovery-shortcuts button{font-size:10px;min-height:25px}.today-panel .date-heading{margin-bottom:5px}.today-panel .task-row{padding:1px 0}.task-select{min-height:50px;padding:6px}.today-panel .task-select strong{font-size:12px;gap:8px}.today-panel .task-select strong>.work-title{font-size:11px}.task-select small{font-size:10px}.plan-more{min-height:42px}.timeline-scroll{max-height:250px}.page-actions{gap:4px}.page-actions>.primary-button{padding:6px 10px;min-height:36px;font-size:12px}.block-handle{min-height:36px;min-width:36px}.layout-editing .date-heading{padding-right:36px}dialog{padding:18px;max-height:calc(100dvh - 24px)}.dialog-head{margin-bottom:14px}.dialog-footer{bottom:-18px;padding-bottom:1px}#log-form .actions{bottom:-18px}#log-form .settings-grid .wheel-trigger{font-size:11px}.picker-routines button{font-size:11px}.definition-card{padding:16px}.duration-presets>button{min-height:34px;font-size:11px}.duration-presets{gap:5px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+.layout-editing [data-layout-id]{min-height:84px!important;height:84px!important;overflow:hidden}.layout-editing [data-layout-id]>:not(.block-handle):not(.layout-caption){display:none!important}.layout-caption{display:flex;align-items:center;min-height:46px;font-size:14px;font-weight:500;padding-right:38px}.layout-editing .block-handle{top:23px;right:15px}.layout-editing [data-layout-id]{cursor:grab}
+
+/* Long task/activity names must stay inside their cards and selection dialogs. */
+.definition-card .date-heading{align-items:flex-start}
+.definition-card .date-heading>button{flex-shrink:0}
+.definition-activities button,.activity-choices button{min-width:0;max-width:100%;align-items:flex-start}
+.definition-activities button>span,.activity-choices button>span{min-width:0;flex:1;overflow-wrap:anywhere}
+.definition-activities button>small,.activity-choices button>small{flex-shrink:0}
+.session-heading>div{min-width:0}.session-task,.session-work{overflow-wrap:anywhere}
+
+.activity-rows .body{overflow-wrap:anywhere}.activity-rows .row>small,.activity-rows .row>button{flex-shrink:0}
+
+/* Direct movement of today's Focus plans; Google and actual logs stay read-only. */
+.day-block[data-plan-id]{cursor:grab;padding-right:31px;touch-action:pan-y}
+.day-block[data-plan-id]:active{cursor:grabbing}
+.calendar-grip{position:absolute;right:0;top:0;width:28px;height:100%;min-height:26px;display:flex!important;align-items:center;justify-content:center;touch-action:none;color:var(--muted);opacity:.7;font-size:16px}
+.calendar-moving{opacity:.25}.calendar-ghost{position:absolute;left:3px;right:3px;z-index:4;pointer-events:none;border:1px solid var(--green);border-radius:7px;background:color-mix(in srgb,var(--green) 20%,var(--paper));color:var(--ink);font-size:11px;padding:6px;box-shadow:0 4px 15px #0003;overflow:hidden}
+.calendar-ghost[data-valid=false]{border-color:#dd7f84;background:color-mix(in srgb,#dd7f84 14%,var(--paper));color:#f1b3b6}
+@media(max-width:400px){.timeline-head,.day-timeline{grid-template-columns:36px minmax(0,1fr) minmax(0,1fr);gap:6px}.day-block{font-size:10px;padding-left:5px}.day-block small{font-size:9px}.day-block[data-plan-id]{padding-right:24px}.calendar-grip{width:23px;font-size:14px}}
+
+.calendar-message{font-size:11px;margin:0 0 10px}.calendar-message:empty{display:none}
+
+#notice{pointer-events:none}
+
+.calendar-ghost{will-change:transform;contain:layout style;transition:none}
+
+/* Lightweight partial intersection shading; content and handles stay above it. */
+.day-block>.calendar-overlap,.calendar-ghost>.calendar-overlap{position:absolute;left:0;right:0;display:block;pointer-events:none;background:repeating-linear-gradient(135deg,#d68a8238 0 4px,#d68a8266 4px 6px);box-shadow:inset 0 1px #d68a8299,inset 0 -1px #d68a8299;z-index:0}
+.day-block>span:not(.calendar-grip),.day-block>small,.calendar-ghost-time{position:relative;z-index:1}
+#timer-alert[hidden]{display:none}#timer-alert{position:fixed;top:max(16px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:10px;width:min(500px,calc(100% - 24px));padding:12px 14px;border:1px solid var(--green);border-radius:14px;background:var(--paper);box-shadow:0 8px 30px #0004}#timer-alert>div{flex:1;min-width:0}#timer-alert strong,#timer-alert span{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#timer-alert span{font-size:11px;color:var(--muted);margin-top:3px}#timer-alert button{flex-shrink:0;padding:6px 9px;font-size:12px;min-height:36px}
+
+/* Edges resize; the side grip continues to move the whole block. */
+.calendar-resize-handle{position:absolute;left:0;right:29px;height:9px;z-index:3;cursor:ns-resize;touch-action:none;user-select:none;display:block}
+.calendar-resize-handle[data-calendar-resize=start]{top:0}.calendar-resize-handle[data-calendar-resize=end]{bottom:0}
+.calendar-resize-handle::after{content:"";position:absolute;left:calc(50% - 7px);width:14px;height:2px;top:3px;background:var(--muted);border-radius:2px;opacity:.45}
+.day-block:hover .calendar-resize-handle::after,.day-block:focus-visible .calendar-resize-handle::after{opacity:1}
+@media(pointer:coarse){.calendar-resize-handle{height:12px}.calendar-resize-handle::after{top:5px}}
+@media(max-width:400px){.calendar-resize-handle{right:24px}}
+.day-block{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
+.day-block[data-plan-id]{padding-top:11px}
+
+[data-task-plan-id]>.task-select{cursor:grab;user-select:none;touch-action:pan-y}
+[data-task-calendar-grip]{cursor:grab;touch-action:none;user-select:none}
+.calendar-drop-target{outline:1px solid var(--green);outline-offset:3px}
+.task-drag-label{position:fixed;top:0;left:0;z-index:40;max-width:min(280px,calc(100vw - 16px));padding:8px 12px;border:1px solid var(--green);border-radius:10px;background:var(--paper);color:var(--ink);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;will-change:transform;contain:layout style}
+.calendar-ghost[hidden],.task-drag-label[hidden]{display:none}
+.calendar-range{color:var(--muted);font-size:10px;font-weight:400;margin-left:6px;white-space:nowrap}
+.calendar-now{--now-color:#e39b93;position:absolute;left:56px;right:0;height:1px;background:var(--now-color);z-index:2;pointer-events:none}
+.calendar-now::before{content:"";position:absolute;left:-3px;top:-2px;width:5px;height:5px;border-radius:50%;background:#cd736b}
+.calendar-now small{position:absolute;left:-54px;top:-7px;width:46px;text-align:right;padding:1px 3px;background:var(--paper);color:var(--now-color);font-size:10px;font-variant-numeric:tabular-nums;line-height:12px}
+@media(max-width:760px){.calendar-now{left:44px}.calendar-now small{left:-42px;width:36px;font-size:9px}}
+@media(max-width:400px){.calendar-now{left:42px}.calendar-now small{left:-40px;width:34px}}
+
+.task-drag-label{width:180px}
+
+[data-theme=light] .calendar-now{--now-color:#9d3c34}
+
+html,body,.timeline-scroll{scroll-behavior:auto!important}
+.timeline-scroll{overscroll-behavior:contain;scroll-snap-type:none;overflow-anchor:none;touch-action:pan-y}
+
+.session-state-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}.timer-popout{font-size:11px;min-height:32px;padding:5px 9px}
+
+/* Picture-in-Picture uses the same compact icon target on every timer state. */
+.timer-popout{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;min-width:36px;min-height:36px;padding:0;flex-shrink:0;border-radius:9px}
+.timer-popout svg{display:block;width:21px;height:21px;pointer-events:none}
+@media(pointer:coarse){.timer-popout{width:44px;height:44px;min-width:44px;min-height:44px}}
+
+/* Navigation arrows align with the date control, not its label. */
+.review-navigation{align-items:flex-end}
+.definition-card .date-heading h2{line-height:22px;padding-top:11px}
+
+/* Dialog actions keep the save/placement control in the final position. */
+dialog form>.actions{justify-content:flex-end;align-items:center;gap:8px}
+dialog form>.actions>button{flex:0 1 auto;min-height:44px}
+dialog form>.actions>.primary-button{margin-inline-start:auto;min-width:112px}
+dialog form>.actions>.primary-button:only-child{flex:1;margin-inline-start:0}
+/* Keep dismissal reachable while the dialog body scrolls. */
+dialog .dialog-head{position:sticky;top:0;z-index:6;min-height:44px;background:var(--paper)}
+dialog .dialog-head>[data-close]{min-height:44px;flex-shrink:0}
+#settings-dialog .settings-tabs{top:58px}
+
+dialog form>.primary-button{display:block;min-width:112px;margin-inline-start:auto}
+@media(max-width:540px){
+ dialog form>.actions{justify-content:flex-start}
+ dialog form>.actions>.primary-button{flex:1 0 100%;min-width:0;margin-inline-start:0}
+}
+
+/* Once the countdown ends, the large clock shows all work; the quiet side clock shows the extra time. */
+.timer-readout{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 9px;min-width:0}
+.timer-readout .timer-output{white-space:nowrap}
+.timer-extra{font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap;color:color-mix(in srgb,var(--muted) 75%,#b47f74)}

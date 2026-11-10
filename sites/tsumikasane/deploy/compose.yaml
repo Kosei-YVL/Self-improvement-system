@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      APP_ORIGIN: https://${APP_DOMAIN:?Set APP_DOMAIN}
+      APP_PASSWORD_HASH: ${APP_PASSWORD_HASH:?Set APP_PASSWORD_HASH}
+    volumes:
+      - app_data:/data
+    expose:
+      - "3000"
+  https:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+volumes:
+  app_data:
+  caddy_data:
+  caddy_config:

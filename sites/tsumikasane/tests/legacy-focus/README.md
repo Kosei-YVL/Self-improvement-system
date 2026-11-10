@@ -1,0 +1,1 @@
+These tests describe the 2026-10-25 four-panel UI and the intermediate sync prototype. They are retained as historical evidence and do not target the current three-screen UI. Run them against their archived application versions. Current coverage: ../focus-three-screen.py, ../focus-sync.test.mjs, ../focus-planning.test.mjs.

@@ -1,0 +1,17 @@
+/* Small, bounded interactions. No decorative animation runs while the app is idle. */
+html{scrollbar-color:var(--line) transparent;scrollbar-width:thin;-webkit-text-size-adjust:100%}
+body{background-color:var(--bg);-webkit-tap-highlight-color:transparent}
+.panel{background-clip:padding-box}
+.timer-output{font-feature-settings:"tnum";text-rendering:optimizeLegibility}
+.session-heading .session-work{line-height:1.5;overflow-wrap:anywhere}
+.task-indicator{box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 7%,transparent)}
+.task-select[aria-pressed=true] .task-indicator{box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 13%,transparent)}
+input,select,button,a{touch-action:manipulation}
+dialog{overscroll-behavior:contain;scrollbar-gutter:stable}
+.dialog-head{gap:12px}.dialog-head h2{min-width:0;overflow-wrap:anywhere}
+.notice-action{margin-left:12px;padding:4px 9px;font-size:12px;min-height:36px;pointer-events:auto;background:transparent;color:inherit;border-color:currentColor}
+#notice{max-width:calc(100% - 24px);white-space:normal;box-shadow:0 5px 24px #0003}
+@media(hover:hover){.skin-choice:hover{border-color:var(--green)}.primary-button:not(:disabled):hover{box-shadow:inset 0 1px #ffffff25,0 4px 14px #0003}}
+@media(pointer:coarse){.mode-switch button,.session-bottom button,.backdate-shortcut,.duration-presets>button,.timer-custom .wheel-trigger{min-height:44px}.recovery-shortcuts button{min-height:40px}.today-panel .date-heading button{min-height:44px}.plan-more{min-width:44px}.skin-choice{min-height:112px}}
+@media(max-width:760px){body{padding-top:env(safe-area-inset-top)}header{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}.app-workspace{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}dialog{max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)}#notice{bottom:calc(80px + env(safe-area-inset-bottom));font-size:12px;padding:8px 12px}}
+@media(prefers-reduced-motion:reduce){.primary-button:hover{filter:none}button:active:not(:disabled){transform:none}}

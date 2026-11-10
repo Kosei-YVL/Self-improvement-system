@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import {mkdtemp,cp,copyFile,readFile,rm} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {tmpdir} from 'node:os';
+import {createServer,request as httpRequest} from 'node:http';
+import {createHash} from 'node:crypto';
+import {setupNetwork,chooseServePort,phoneGuide} from '../scripts/setup-focus-network.mjs';
+import {privateOrigin,originForRequest} from '../scripts/focus-origin.mjs';
+import {readConfig,stopServer} from '../scripts/focus-windows-launcher.mjs';
+const local='http://127.0.0.1:4545',origin='https://focus-unit.demo.ts.net';
+assert.equal(privateOrigin(origin),origin);assert.throws(()=>privateOrigin('http://focus.example'));assert.throws(()=>privateOrigin('https://focus.example/path'));
+const req=(host,from='127.0.0.1',requestOrigin)=>({headers:{host,...(requestOrigin?{origin:requestOrigin}:{})},socket:{remoteAddress:from}});
+assert.equal(originForRequest(req('127.0.0.1:4545'),local,origin),local);assert.equal(originForRequest(req('focus-unit.demo.ts.net'),local,origin),origin);assert.equal(originForRequest(req('127.0.0.1:4545','127.0.0.1',origin),local,origin),origin);
+assert.equal(originForRequest(req('other.example'),local,origin),null);assert.equal(originForRequest(req('focus-unit.demo.ts.net','192.0.2.10'),local,origin),null);
+assert.equal(chooseServePort({},local),443);assert.equal(chooseServePort({TCP:{443:{}}},local),8443);assert.throws(()=>chooseServePort({TCP:{443:{},8443:{}}},local));
+const root=resolve(import.meta.dirname,'..'),temp=await mkdtemp(resolve(tmpdir(),'focus-network-'));let config;
+try{
+ const target=resolve(temp,'Focus');await cp(resolve(root,'focus-sync'),resolve(target,'personal'),{recursive:true});await copyFile(resolve(root,'scripts/focus-windows-launcher.mjs'),resolve(target,'focus-launcher.mjs'));await copyFile(resolve(root,'scripts/focus-paths.mjs'),resolve(target,'focus-paths.mjs'));
+ const listener=createServer();await new Promise(done=>listener.listen(0,'127.0.0.1',done));const port=listener.address().port;await new Promise(done=>listener.close(done));
+ const env={...process.env,PORT:String(port)};delete env.FOCUS_DATA_DIR;delete env.SYNC_AUTH_HASH;
+ const calls=[];const run=async(file,args)=>{calls.push(args);if(args[0]==='status')return {stdout:JSON.stringify({BackendState:'Running',Self:{DNSName:'focus-unit.demo.ts.net.'}})};if(args[0]==='serve'&&args[1]==='status')return {stdout:'{}'};return {stdout:''};};
+ const result=await setupNetwork({target,env,run,open:false,platform:'win32'});config=await readConfig(target,env);
+ assert.equal(result.origin,origin);assert(result.privateOnly);assert(calls.some(args=>args.includes('--https=443')));assert(!calls.some(args=>args.includes('funnel')||args.includes('reset')));
+ const key=(await readFile(resolve(config.dataDir,'sync-key.txt'),'utf8')).trim(),auth=createHash('sha256').update('focus-auth-v1:'+key).digest('hex');
+ const status=(path,options={})=>new Promise((done,reject)=>{const req=httpRequest('http://127.0.0.1:'+port+path,options,res=>{res.resume();res.on('end',()=>done(res.statusCode));});req.on('error',reject);req.end(options.body);});
+ const headers={Host:'focus-unit.demo.ts.net',Origin:origin,Authorization:'Bearer '+auth,'X-Focus-Environment':'personal','Content-Type':'application/json','X-Focus-Local':'1'};
+ assert.equal(await status('/focus.html',{headers}),200);
+ assert.equal(await status('/api/focus-sync',{headers}),200);
+ assert.equal(await status('/api/focus-migration',{method:'POST',headers,body:'{"action":"status"}'}),403);
+ assert.equal(await status('/api/focus-device-backup',{method:'POST',headers,body:'{}'}),403);
+ assert.equal(await status('/focus.html',{headers:{Host:'untrusted.example'}}),403);
+ assert.equal((await fetch('http://127.0.0.1:'+port+'/phone-setup.html')).status,404);
+ const guide=await readFile(result.guide,'utf8');assert(guide.includes('<svg'));assert(guide.includes('#sync='+key));assert(!guide.includes('https://api.qr'));
+ assert(guide.includes('スリープ中'));assert(guide.includes('一般公開するFunnelは使用しません'));
+ console.log('Private connection checks passed: explicit HTTPS origin, proxy-host handling, foreign/remote peers rejected, no existing Serve override/Funnel, locally generated QR setup, private migration/backup/key guide not exposed through proxy. Tailscale commands mocked; real devices/accounts not connected.');
+}finally{if(config)try{await stopServer(config);}catch{}await rm(temp,{recursive:true,force:true});}
